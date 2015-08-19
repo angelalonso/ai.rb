@@ -13,10 +13,10 @@
 def load_all
   # List of files starting with "mod_" and ending with ".rb" in the given directory
   basedir = './mods'
-  files = Dir.glob("*.rb")
-  puts files
-  puts "Loading scripts..."
-  require './mods/mod_test.rb'
+  files = Dir.glob("#{basedir}/mod_*.rb")
+  files.each do |exm|
+    require "#{exm}"
+  end
   test = Test.new
 end
 

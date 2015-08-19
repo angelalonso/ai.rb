@@ -16,7 +16,7 @@ def load_all
   files = Dir.glob("*.rb")
   puts files
   puts "Loading scripts..."
-  require './modules/mod_test.rb'
+  require './mods/mod_test.rb'
   test = Test.new
 end
 

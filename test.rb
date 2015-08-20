@@ -15,7 +15,15 @@ def load_all
   basedir = './mods'
   files = Dir.glob("#{basedir}/mod_*.rb")
   files.each do |exm|
-    require "#{exm}"
+   # require "#{exm}"
+    require exm
+    File.open(exm).each do |line|
+      if line["class"]
+        puts line
+        words = line.split 
+        puts words[1]
+      end
+    end
   end
   test = Test.new
 end

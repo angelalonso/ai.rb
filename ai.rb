@@ -16,13 +16,19 @@ def load_all
   basedir = '.'
   files = Dir.glob("#{basedir}/mod_*.rb")
   files.each do |exm|
+    classarray = []
     require exm
     File.open(exm).each do |line|
       if line["class"]
-        words = line.split 
-        @helplist = @helplist + [words[1]]
+        classline_words = line.split 
+        classarray[0] = classline_words[1]
+      end
+      if line["def"] && !line["initialize"]
+        defline_words = line.split
+        classarray = classarray + [defline_words[1]]
       end
     end
+    @helplist = @helplist + [classarray]
   end
 end
 
@@ -30,12 +36,19 @@ def give_help
   puts "Syntax:" 
   puts "#{__FILE__} <mode> <params>"
   puts "\nmodes:"
-  puts @helplist
+  @helplist.each do |entry|
+    puts ("  - " + entry[0])
+    print("      ")
+    entry[1..entry.size-2].each do |opt|
+      print (opt+"|")
+    end 
+    puts(entry[entry.size-1])
+  end 
 end
 
 load_all()
 if @helplist.include? ARGV[0]
   puts "found"
-end
+else
   give_help()
 end

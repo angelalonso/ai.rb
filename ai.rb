@@ -1,38 +1,41 @@
 #!/usr/bin/ruby
 
-require './module_weather.rb'
+# Ruby modularity wrapper #
+###########################
 
+## WHAT THIS SHOULD DO:
+# Receive a list of ruby files (all .rb in a directory, maybe?)
+# "Require" them
+# Read the possible classes in them(one per ruby file, maybe?), and show them as possible parameters when someone asks for help (--help)
+# When the parameter is given, give way to that ruby code. "That ruby code" should handle errors
 
-class Command
-  def initialize(command)
-    @command = command
-  end
+@helplist = []
 
-  def do
-    case @command
-## LEARNT: Regexp, casi insensitive
-    when /weather/i
-      puts "El tiempo!"
-      weather = Weather.new.get_temperature
-    else
-      puts "K.THX.BYE"
+def load_all
+  # List of files starting with "mod_" and ending with ".rb" in the given directory
+  basedir = '.'
+  files = Dir.glob("#{basedir}/mod_*.rb")
+  files.each do |exm|
+    require exm
+    File.open(exm).each do |line|
+      if line["class"]
+        words = line.split 
+        @helplist = @helplist + [words[1]]
+      end
     end
   end
 end
 
-
-# Program-wide definitions
-def show_help
-  scriptname = File.basename(__FILE__)
-  syntax = "#{scriptname} <parameter>"
-  puts "Error! please keep the syntax in mind:"
-  puts syntax
+def give_help
+  puts "Syntax:" 
+  puts "#{__FILE__} <mode> <params>"
+  puts "\nmodes:"
+  puts @helplist
 end
 
-
-if ARGV.length == 0
-  show_help
-else
-  com = Command.new(ARGV[0])
-  com.do
+load_all()
+if @helplist.include? ARGV[0]
+  puts "found"
+end
+  give_help()
 end
